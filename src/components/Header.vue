@@ -25,3 +25,11 @@ export default {
   name: "Header"
 };
 </script>
+
+<style>
+.mu-appbar {
+  top: 0;
+  position: sticky;
+  width: 100%;
+}
+</style>

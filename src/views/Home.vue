@@ -51,6 +51,66 @@ export default {
         {
           title: "Work",
           isDone: false
+        },
+        {
+          title: "Eat1",
+          isDone: false
+        },
+        {
+          title: "Sleep1",
+          isDone: true
+        },
+        {
+          title: "Work1",
+          isDone: false
+        },
+        {
+          title: "Eat2",
+          isDone: false
+        },
+        {
+          title: "Sleep2",
+          isDone: true
+        },
+        {
+          title: "Work2",
+          isDone: false
+        },
+        {
+          title: "Eat3",
+          isDone: false
+        },
+        {
+          title: "Sleep3",
+          isDone: true
+        },
+        {
+          title: "Work3",
+          isDone: false
+        },
+        {
+          title: "Eat4",
+          isDone: false
+        },
+        {
+          title: "Sleep4",
+          isDone: true
+        },
+        {
+          title: "Work4",
+          isDone: false
+        },
+        {
+          title: "Eat5",
+          isDone: false
+        },
+        {
+          title: "Sleep5",
+          isDone: true
+        },
+        {
+          title: "Work5",
+          isDone: false
         }
       ],
       openSimple: false,
@@ -91,7 +151,7 @@ export default {
 
 <style scoped>
 .home {
-  padding: 10px;
+  padding: 20px;
 }
 
 #create {
