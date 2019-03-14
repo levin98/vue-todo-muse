@@ -13,6 +13,8 @@ import theme from "muse-ui/lib/theme";
 // Import Roboto font
 import "typeface-roboto";
 
+import "./assets/iconfont/material-icons.css";
+
 // Use default dark theme
 theme.use("dark");
 
