@@ -7,9 +7,24 @@
       :isDoneProp="toDoItem.isDone"
       @toggle-to-do="toggleDone(toDoItem)"
     ></ToDoItem>
-    <mu-button id="create" fab medium color="primary">
+    <mu-button id="create" fab medium color="primary" @click="openSimpleDialog">
       <mu-icon value="add"></mu-icon>
     </mu-button>
+    <mu-dialog
+      title="Create new to do item"
+      width="360"
+      :open.sync="openSimple"
+    >
+      <mu-form :model="form" :label-position="labelPosition" label-width="100">
+        <mu-form-item prop="title" label="Title">
+          <mu-text-field v-model="form.title"></mu-text-field>
+        </mu-form-item>
+      </mu-form>
+      <mu-button color="primary" @click="submit">Add</mu-button>
+      <mu-button flat color="primary" @click="closeSimpleDialog"
+        >Cancel</mu-button
+      >
+    </mu-dialog>
   </div>
 </template>
 
@@ -37,12 +52,28 @@ export default {
           title: "Work",
           isDone: false
         }
-      ]
+      ],
+      openSimple: false,
+      labelPosition: "top",
+      form: {
+        title: ""
+      }
     };
   },
   methods: {
     toggleDone(toDoItem) {
       toDoItem.isDone = !toDoItem.isDone;
+    },
+    openSimpleDialog() {
+      this.openSimple = true;
+    },
+    closeSimpleDialog() {
+      this.openSimple = false;
+    },
+    submit() {
+      this.toDoItems.push({ title: this.form.title, isDone: false });
+      this.form.title = "";
+      this.openSimple = false;
     }
   },
   computed: {
