@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <ToDoItem
-      v-for="toDoItem of toDoItems"
+      v-for="toDoItem of toDoItemsSorted"
       :key="toDoItem.title"
       :title="toDoItem.title"
       :isDoneProp="toDoItem.isDone"
@@ -43,6 +43,16 @@ export default {
   methods: {
     toggleDone(toDoItem) {
       toDoItem.isDone = !toDoItem.isDone;
+    }
+  },
+  computed: {
+    toDoItemsSorted() {
+      let done = [],
+        notDone = [];
+      for (var toDoItem of this.toDoItems) {
+        toDoItem.isDone ? done.push(toDoItem) : notDone.push(toDoItem);
+      }
+      return notDone.concat(done);
     }
   }
 };
