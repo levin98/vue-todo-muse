@@ -1,23 +1,12 @@
 <template>
   <div class="home">
-    <mu-card class="to-do-item">
-      <mu-flex class="to-do-wrapper" justify-content="start">
-        <mu-flex
-          class="to-do-checkbox"
-          justify-content="start"
-          align-self="center"
-        >
-          <mu-checkbox></mu-checkbox>
-        </mu-flex>
-        <mu-flex
-          class="to-do-title"
-          justify-content="start"
-          align-self="center"
-        >
-          <span>Title</span>
-        </mu-flex>
-      </mu-flex>
-    </mu-card>
+    <ToDoItem
+      v-for="toDoItem of toDoItems"
+      :key="toDoItem.title"
+      :title="toDoItem.title"
+      :isDoneProp="toDoItem.isDone"
+      @toggle-to-do="toggleDone(toDoItem)"
+    ></ToDoItem>
     <mu-button id="create" fab medium color="primary">
       <mu-icon value="add"></mu-icon>
     </mu-button>
@@ -26,10 +15,36 @@
 
 <script>
 // @ is an alias to /src
+import ToDoItem from "@/components/ToDoItem.vue";
 
 export default {
   name: "home",
-  components: {}
+  components: {
+    ToDoItem
+  },
+  data() {
+    return {
+      toDoItems: [
+        {
+          title: "Eat",
+          isDone: false
+        },
+        {
+          title: "Sleep",
+          isDone: true
+        },
+        {
+          title: "Work",
+          isDone: false
+        }
+      ]
+    };
+  },
+  methods: {
+    toggleDone(toDoItem) {
+      toDoItem.isDone = !toDoItem.isDone;
+    }
+  }
 };
 </script>
 
@@ -42,23 +57,5 @@ export default {
   position: fixed;
   bottom: 40px;
   right: 40px;
-}
-
-.to-do-item {
-  width: 100%;
-  height: 50px;
-}
-
-.to-do-wrapper {
-  width: 100%;
-  height: 50px;
-}
-
-.to-do-checkbox {
-  margin: 0px 20px;
-}
-
-.to-do-title {
-  margin: 0px 20px;
 }
 </style>
