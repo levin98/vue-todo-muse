@@ -10,6 +10,9 @@ import "muse-ui/dist/muse-ui.css";
 // Import Muse-ui theme
 import theme from "muse-ui/lib/theme";
 
+// Import Roboto font
+import "typeface-roboto";
+
 // Use default dark theme
 theme.use("dark");
 
