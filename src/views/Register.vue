@@ -101,7 +101,9 @@ export default {
               this.openAlert(msg.data.status, msg.statusText);
             })
             .catch(e => {
-              this.openAlert(e.status, e.data);
+              this.openAlert("error", "Failed");
+              //eslint-disable-next-line
+              console.log(e)
             });
         } else {
           return false;

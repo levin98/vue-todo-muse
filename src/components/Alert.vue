@@ -1,5 +1,5 @@
 <template>
-  <mu-snackbar :color="color" :open.sync="open">
+  <mu-snackbar :color="color" :open.sync="open" position="top">
     <mu-icon left :value="icon"></mu-icon>
     {{ message }}
     <mu-button flat slot="action" color="#fff" @click="$emit('close-alert')">
