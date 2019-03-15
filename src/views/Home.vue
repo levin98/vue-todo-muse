@@ -20,8 +20,8 @@
     <div v-if="control.switchNotDone">
       <ToDoItem
         v-for="toDoItem of toDoItemsNotDone"
-        :key="toDoItem.title"
-        :title="toDoItem.title"
+        :key="toDoItem.todo_id"
+        :title="toDoItem.todo"
         :isDoneProp="toDoItem.isDone"
         @toggle-to-do="toggleDone(toDoItem)"
       ></ToDoItem>
@@ -29,8 +29,8 @@
     <div v-if="control.switchDone">
       <ToDoItem
         v-for="toDoItem of toDoItemsDone"
-        :key="toDoItem.title"
-        :title="toDoItem.title"
+        :key="toDoItem.todo_id"
+        :title="toDoItem.todo"
         :isDoneProp="toDoItem.isDone"
         @toggle-to-do="toggleDone(toDoItem)"
       ></ToDoItem>
@@ -99,12 +99,44 @@ export default {
     },
     submit() {
       const payload = {
-        user: this.$store.getter.getUsername,
+        user: this.$store.getters.getUsername,
         todo: this.form.title
       };
-      addTodo(payload);
+      addTodo(payload)
+        .then(msg => {
+          // eslint-disable-next-line
+                console.log(msg.data)
+          this.updateTodo();
+          this.$parent.openAlert(msg.data.status, msg.data.status);
+        })
+        .catch(e => {
+          if (e.response) {
+            this.$parent.openAlert(
+              e.response.data.status,
+              e.response.data.data
+            );
+          }
+        });
       this.form.title = "";
       this.openSimple = false;
+    },
+    updateTodo() {
+      getTodo(this.$store.getters.getUsername)
+        .then(result => {
+          //eslint-disable-next-line
+          console.log(result)
+          if (result.data.data.length > 0) {
+            this.toDoItems = result.data.data;
+          }
+        })
+        .catch(e => {
+          if (e.response) {
+            this.$parent.openAlert(
+              e.response.data.status,
+              e.response.data.data
+            );
+          }
+        });
     }
   },
   computed: {
@@ -127,9 +159,7 @@ export default {
     }
   },
   mounted() {
-    getTodo(this.$store.getters.getUsername).then(result => {
-      this.toDoItems.concat(result.data);
-    });
+    this.updateTodo();
   }
 };
 </script>
