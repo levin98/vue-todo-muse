@@ -59,6 +59,8 @@
 <script>
 // @ is an alias to /src
 import ToDoItem from "@/components/ToDoItem.vue";
+import { getTodo } from "../../api";
+import { addTodo } from "../../api";
 
 export default {
   name: "home",
@@ -74,20 +76,7 @@ export default {
         switchDone: true,
         switchNotDone: true
       },
-      toDoItems: [
-        {
-          title: "Eat",
-          isDone: false
-        },
-        {
-          title: "Drink",
-          isDone: true
-        },
-        {
-          title: "Sleep",
-          isDone: false
-        }
-      ],
+      toDoItems: [],
       openSimple: false,
       labelPosition: "top",
       form: {
@@ -109,7 +98,11 @@ export default {
       this.openSimple = false;
     },
     submit() {
-      this.toDoItems.push({ title: this.form.title, isDone: false });
+      const payload = {
+        user: this.$store.getter.getUsername,
+        todo: this.form.title
+      };
+      addTodo(payload);
       this.form.title = "";
       this.openSimple = false;
     }
@@ -132,6 +125,11 @@ export default {
     open() {
       return this.$store.getters.getDrawerState;
     }
+  },
+  mounted() {
+    getTodo(this.$store.getters.getUsername).then(result => {
+      this.toDoItems.concat(result.data);
+    });
   }
 };
 </script>
