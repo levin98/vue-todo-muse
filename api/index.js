@@ -18,3 +18,11 @@ export const addTodo = async (item) => {
 export const getTodo = async (user) => {
     return axios.get(url + "/todos/" + user)
 }
+
+export const updateTodo = async (id, payload) => {
+    return axios.put(url + "/todos/" + id, payload)
+}
+
+export const removeTodo = async (id, payload) => {
+    return axios.delete(url + "/todos/" + id, { data: payload })
+}

@@ -11,6 +11,14 @@
       <mu-flex class="to-do-title" justify-content="start" align-self="center">
         <span>{{ title }}</span>
       </mu-flex>
+      <mu-flex justify-content="end" align-self="center" fill>
+        <mu-button icon color="primary" @click="editTodo">
+          <mu-icon value="edit"></mu-icon>
+        </mu-button>
+        <mu-button icon color="primary" @click="removeTodo">
+          <mu-icon value="delete"></mu-icon>
+        </mu-button>
+      </mu-flex>
     </mu-flex>
   </mu-card>
 </template>
@@ -38,6 +46,12 @@ export default {
   methods: {
     toggleDone() {
       this.$emit("toggle-to-do");
+    },
+    editTodo() {
+      this.$emit("edit-to-do");
+    },
+    removeTodo() {
+      this.$emit("remove-to-do");
     }
   }
 };
@@ -51,8 +65,11 @@ export default {
   margin-bottom: 10px;
 }
 
-.to-do-item-done {
+.to-do-item-done .to-do-title {
   text-decoration: line-through;
+}
+
+.to-do-item-done {
   background-color: gray !important;
 }
 

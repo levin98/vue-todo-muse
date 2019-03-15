@@ -22,8 +22,10 @@
         v-for="toDoItem of toDoItemsNotDone"
         :key="toDoItem.todo_id"
         :title="toDoItem.todo"
-        :isDoneProp="toDoItem.isDone"
+        :isDoneProp="toDoItem.isdone"
         @toggle-to-do="toggleDone(toDoItem)"
+        @edit-to-do="editTodo(toDoItem)"
+        @remove-to-do="deleteTodo(toDoItem)"
       ></ToDoItem>
     </div>
     <div v-if="control.switchDone">
@@ -31,24 +33,24 @@
         v-for="toDoItem of toDoItemsDone"
         :key="toDoItem.todo_id"
         :title="toDoItem.todo"
-        :isDoneProp="toDoItem.isDone"
+        :isDoneProp="toDoItem.isdone"
         @toggle-to-do="toggleDone(toDoItem)"
+        @edit-to-do="editTodo(toDoItem)"
+        @remove-to-do="deleteTodo(toDoItem)"
       ></ToDoItem>
     </div>
     <mu-button id="create" fab medium color="primary" @click="openSimpleDialog">
       <mu-icon value="add"></mu-icon>
     </mu-button>
-    <mu-dialog
-      title="Create new to do item"
-      width="360"
-      :open.sync="openSimple"
-    >
+    <mu-dialog :title="dialogIitle" width="360" :open.sync="openSimple">
       <mu-form :model="form" :label-position="labelPosition" label-width="100">
         <mu-form-item prop="title" label="Title">
           <mu-text-field v-model="form.title"></mu-text-field>
         </mu-form-item>
       </mu-form>
-      <mu-button color="primary" @click="submit">Add</mu-button>
+      <mu-button color="primary" @click="submit">
+        {{ this.btnText }}
+      </mu-button>
       <mu-button flat color="primary" @click="closeSimpleDialog"
         >Cancel</mu-button
       >
@@ -61,6 +63,8 @@
 import ToDoItem from "@/components/ToDoItem.vue";
 import { getTodo } from "../../api";
 import { addTodo } from "../../api";
+import { updateTodo } from "../../api";
+import { removeTodo } from "../../api";
 
 export default {
   name: "home",
@@ -77,50 +81,99 @@ export default {
         switchNotDone: true
       },
       toDoItems: [],
+      dialogIitle: "Create a new to do...",
+      btnText: "Add",
       openSimple: false,
       labelPosition: "top",
       form: {
         title: ""
+      },
+      edittingItem: {
+        todo_id: "",
+        isdone: ""
       }
     };
   },
   methods: {
     toggleDone(toDoItem) {
-      toDoItem.isDone = !toDoItem.isDone;
+      toDoItem.isdone = !toDoItem.isdone;
+      const payload = {
+        user: this.$store.getters.getUsername,
+        todo: toDoItem.todo,
+        isdone: toDoItem.isdone
+      };
+      updateTodo(toDoItem.todo_id, payload).then(() => {
+        this.refreshTodo();
+      });
+    },
+    editTodo(toDoItem) {
+      this.dialogIitle = "Editing...";
+      this.btnText = "Save";
+      this.form.title = toDoItem.todo;
+      this.edittingItem.todo_id = toDoItem.todo_id;
+      this.edittingItem.isdone = toDoItem.isdone;
+      this.openSimple = true;
+    },
+    deleteTodo(toDoItem) {
+      const payload = {
+        user: this.$store.getters.getUsername,
+        todo: toDoItem.todo
+      };
+      removeTodo(toDoItem.todo_id, payload).then(() => {
+        this.refreshTodo();
+      });
     },
     toggleDrawer() {
       this.$store.dispatch("toggleDrawer");
     },
     openSimpleDialog() {
+      this.dialogIitle = "Create a new to do...";
+      this.btnText = "Add";
       this.openSimple = true;
     },
     closeSimpleDialog() {
+      this.dialogIitle = "Create a new to do...";
+      this.btnText = "Add";
+      this.form.title = "";
+      this.edittingItem.todo_id = "";
+      this.edittingItem.isdone = "";
       this.openSimple = false;
     },
     submit() {
-      const payload = {
-        user: this.$store.getters.getUsername,
-        todo: this.form.title
-      };
-      addTodo(payload)
-        .then(msg => {
-          // eslint-disable-next-line
-                console.log(msg.data)
-          this.updateTodo();
-          this.$parent.openAlert(msg.data.status, msg.data.status);
-        })
-        .catch(e => {
-          if (e.response) {
-            this.$parent.openAlert(
-              e.response.data.status,
-              e.response.data.data
-            );
-          }
+      if (this.btnText === "Add") {
+        const payload = {
+          user: this.$store.getters.getUsername,
+          todo: this.form.title
+        };
+        addTodo(payload)
+          .then(msg => {
+            // eslint-disable-next-line
+                  console.log(msg.data)
+            this.refreshTodo();
+            this.$parent.openAlert(msg.data.status, msg.data.status);
+          })
+          .catch(e => {
+            if (e.response) {
+              this.$parent.openAlert(
+                e.response.data.status,
+                e.response.data.data
+              );
+            }
+          });
+        this.closeSimpleDialog();
+      } else {
+        const payload = {
+          user: this.$store.getters.getUsername,
+          todo: this.form.title,
+          isdone: this.edittingItem.isdone
+        };
+        updateTodo(this.edittingItem.todo_id, payload).then(() => {
+          this.refreshTodo();
+          this.closeSimpleDialog();
         });
-      this.form.title = "";
-      this.openSimple = false;
+      }
     },
-    updateTodo() {
+    refreshTodo() {
       getTodo(this.$store.getters.getUsername)
         .then(result => {
           //eslint-disable-next-line
@@ -143,14 +196,14 @@ export default {
     toDoItemsDone() {
       let done = [];
       for (var toDoItem of this.toDoItems) {
-        toDoItem.isDone ? done.push(toDoItem) : "";
+        toDoItem.isdone ? done.push(toDoItem) : "";
       }
       return done;
     },
     toDoItemsNotDone() {
       let notDone = [];
       for (var toDoItem of this.toDoItems) {
-        !toDoItem.isDone ? notDone.push(toDoItem) : "";
+        !toDoItem.isdone ? notDone.push(toDoItem) : "";
       }
       return notDone;
     },
@@ -159,7 +212,7 @@ export default {
     }
   },
   mounted() {
-    this.updateTodo();
+    this.refreshTodo();
   }
 };
 </script>
