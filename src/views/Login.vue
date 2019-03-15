@@ -4,7 +4,7 @@
     <mu-form
       ref="form"
       :model="loginForm"
-      :label-position="loginForm.labelPosition"
+      :label-position="labelPosition"
       class="login-form"
     >
       <mu-form-item label="Username" prop="username" :rules="usernameRules">
@@ -50,8 +50,8 @@ export default {
           message: "Password length must be greater than 3 and less than 10"
         }
       ],
+      labelPosition: "top",
       loginForm: {
-        labelPosition: "top",
         username: "",
         password: ""
       }

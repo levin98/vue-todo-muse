@@ -1,13 +1,10 @@
 import axios from 'axios';
-import store from '@/store';
-import router from '@/router';
 
-const url = ""
+const url = "http://f383efb4.ngrok.io/api"
 
 
 export const registerUser = async (form) => {
     return axios.post(url + "/register", form)
-
 }
 
 export const login = async (form) => {
