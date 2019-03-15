@@ -1,39 +1,54 @@
 <template>
-  <mu-paper class="login-container" :z-depth="5">
-    <h1>Login</h1>
-    <mu-form
-      ref="form"
-      :model="loginForm"
-      :label-position="labelPosition"
-      class="login-form"
-    >
-      <mu-form-item label="Username" prop="username" :rules="usernameRules">
-        <mu-text-field
-          v-model="loginForm.username"
-          prop="username"
-        ></mu-text-field>
-      </mu-form-item>
-      <mu-form-item label="Password" prop="password" :rules="passwordRules">
-        <mu-text-field
-          type="password"
-          v-model="loginForm.password"
-          prop="password"
-        ></mu-text-field>
-      </mu-form-item>
-      <mu-form-item>
-        <mu-button color="primary" @click="submit">Sign In</mu-button>
-        <mu-button @click="clear">Reset</mu-button>
-      </mu-form-item>
-    </mu-form>
-    <router-link to="/register">
-      <mu-button color="primary" flat>Sign Up</mu-button>
-    </router-link>
-  </mu-paper>
+  <div>
+    <mu-paper class="login-container" :z-depth="5">
+      <h1>Login</h1>
+      <mu-form
+        ref="form"
+        :model="loginForm"
+        :label-position="labelPosition"
+        class="login-form"
+      >
+        <mu-form-item label="Username" prop="username" :rules="usernameRules">
+          <mu-text-field
+            v-model="loginForm.username"
+            prop="username"
+          ></mu-text-field>
+        </mu-form-item>
+        <mu-form-item label="Password" prop="password" :rules="passwordRules">
+          <mu-text-field
+            type="password"
+            v-model="loginForm.password"
+            prop="password"
+          ></mu-text-field>
+        </mu-form-item>
+        <mu-form-item>
+          <mu-button color="primary" @click="submit">Sign In</mu-button>
+          <mu-button @click="clear">Reset</mu-button>
+        </mu-form-item>
+      </mu-form>
+      <router-link to="/register">
+        <mu-button color="primary" flat>Sign Up</mu-button>
+      </router-link>
+    </mu-paper>
+    <Alert
+      :color="this.alertBox.color"
+      :message="this.alertBox.message"
+      :icon="this.alertBox.icon"
+      :open="this.alertBox.open"
+      @close-alert="closeAlert"
+    />
+  </div>
 </template>
 
 <script>
+import Alert from "@/components/Alert.vue";
+import { login } from "../../api";
+
 export default {
   name: "login",
+  components: {
+    Alert
+  },
   data() {
     return {
       usernameRules: [
@@ -54,14 +69,45 @@ export default {
       loginForm: {
         username: "",
         password: ""
+      },
+      alertBox: {
+        open: false,
+        message: "",
+        color: "success",
+        timeout: 3000
       }
     };
   },
+  computed: {
+    icon() {
+      return {
+        success: "check_circle",
+        info: "info",
+        warning: "priority_high",
+        error: "warning"
+      }[this.alertBox.color];
+    }
+  },
   methods: {
     submit() {
-      this.$refs.form.validate().then(result => {
-        //eslint-disable-next-line
-        console.log('form valid: ', result)
+      this.$refs.form.validate().then(valid => {
+        if (valid) {
+          const payload = {
+            user: this.loginForm.username,
+            password: this.loginForm.password
+          };
+          login(payload)
+            .then(msg => {
+              this.openAlert(msg.data.status, msg.statusText);
+            })
+            .catch(e => {
+              this.openAlert(e.response.data.status, e.response.data.data);
+              //eslint-disable-next-line
+              console.log(e.response)
+            });
+        } else {
+          return false;
+        }
       });
     },
     clear() {
@@ -70,6 +116,20 @@ export default {
         username: "",
         password: ""
       };
+    },
+    openAlert(status, statusText) {
+      status === "success"
+        ? (this.alertBox.color = "success")
+        : (this.alertBox.color = "error");
+      this.alertBox.message = statusText;
+      if (this.alertBox.timer) clearTimeout(this.alertBox.timer);
+      this.alertBox.open = true;
+      this.alertBox.timer = setTimeout(() => {
+        this.alertBox.open = false;
+      }, this.alertBox.timeout);
+    },
+    closeAlert() {
+      this.alertBox.open = false;
     }
   }
 };
