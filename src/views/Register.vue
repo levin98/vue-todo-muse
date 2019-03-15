@@ -98,7 +98,7 @@ export default {
           };
           registerUser(payload)
             .then(msg => {
-              this.openAlert(msg.data.status, msg.statusText);
+              this.openAlert(msg.data.status, msg.data.data);
             })
             .catch(e => {
               this.openAlert(e.response.data.status, e.response.data.data);
