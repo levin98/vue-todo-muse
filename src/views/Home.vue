@@ -17,13 +17,24 @@
       </mu-form>
       <mu-button color="primary" @click="toggleDrawer">Close</mu-button>
     </mu-drawer>
-    <ToDoItem
-      v-for="toDoItem of toDoItemsSorted"
-      :key="toDoItem.title"
-      :title="toDoItem.title"
-      :isDoneProp="toDoItem.isDone"
-      @toggle-to-do="toggleDone(toDoItem)"
-    ></ToDoItem>
+    <div v-if="control.switchNotDone">
+      <ToDoItem
+        v-for="toDoItem of toDoItemsNotDone"
+        :key="toDoItem.title"
+        :title="toDoItem.title"
+        :isDoneProp="toDoItem.isDone"
+        @toggle-to-do="toggleDone(toDoItem)"
+      ></ToDoItem>
+    </div>
+    <div v-if="control.switchDone">
+      <ToDoItem
+        v-for="toDoItem of toDoItemsDone"
+        :key="toDoItem.title"
+        :title="toDoItem.title"
+        :isDoneProp="toDoItem.isDone"
+        @toggle-to-do="toggleDone(toDoItem)"
+      ></ToDoItem>
+    </div>
     <mu-button id="create" fab medium color="primary" @click="openSimpleDialog">
       <mu-icon value="add"></mu-icon>
     </mu-button>
@@ -63,7 +74,20 @@ export default {
         switchDone: true,
         switchNotDone: true
       },
-      toDoItems: [],
+      toDoItems: [
+        {
+          title: "Eat",
+          isDone: false
+        },
+        {
+          title: "Drink",
+          isDone: true
+        },
+        {
+          title: "Sleep",
+          isDone: false
+        }
+      ],
       openSimple: false,
       labelPosition: "top",
       form: {
@@ -91,13 +115,19 @@ export default {
     }
   },
   computed: {
-    toDoItemsSorted() {
-      let done = [],
-        notDone = [];
+    toDoItemsDone() {
+      let done = [];
       for (var toDoItem of this.toDoItems) {
-        toDoItem.isDone ? done.push(toDoItem) : notDone.push(toDoItem);
+        toDoItem.isDone ? done.push(toDoItem) : "";
       }
-      return notDone.concat(done);
+      return done;
+    },
+    toDoItemsNotDone() {
+      let notDone = [];
+      for (var toDoItem of this.toDoItems) {
+        !toDoItem.isDone ? notDone.push(toDoItem) : "";
+      }
+      return notDone;
     },
     open() {
       return this.$store.getters.getDrawerState;
