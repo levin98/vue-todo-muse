@@ -1,18 +1,33 @@
 <template>
   <mu-paper class="login-container" :z-depth="5">
     <h1>Login</h1>
-    <mu-form ref="form" :model="loginForm" :label-position="loginForm.labelPosition" class="login-form">
+    <mu-form
+      ref="form"
+      :model="loginForm"
+      :label-position="loginForm.labelPosition"
+      class="login-form"
+    >
       <mu-form-item label="Username" prop="username" :rules="usernameRules">
-        <mu-text-field v-model="loginForm.username" prop="username"></mu-text-field>
+        <mu-text-field
+          v-model="loginForm.username"
+          prop="username"
+        ></mu-text-field>
       </mu-form-item>
       <mu-form-item label="Password" prop="password" :rules="passwordRules">
-        <mu-text-field type="password" v-model="loginForm.password" prop="password"></mu-text-field>
+        <mu-text-field
+          type="password"
+          v-model="loginForm.password"
+          prop="password"
+        ></mu-text-field>
       </mu-form-item>
       <mu-form-item>
-        <mu-button color="primary" @click="submit">Login</mu-button>
+        <mu-button color="primary" @click="submit">Sign In</mu-button>
         <mu-button @click="clear">Reset</mu-button>
       </mu-form-item>
     </mu-form>
+    <router-link to="/register">
+      <mu-button color="primary" flat>Sign Up</mu-button>
+    </router-link>
   </mu-paper>
 </template>
 
@@ -22,32 +37,38 @@ export default {
   data() {
     return {
       usernameRules: [
-        { validate: (val) => !!val, message: 'Username must be filled in'},
-        { validate: (val) => val.length >= 3, message: 'Username length greater than 3'}
+        { validate: val => !!val, message: "Username must be filled in" },
+        {
+          validate: val => val.length >= 3,
+          message: "Username length greater than 3"
+        }
       ],
       passwordRules: [
-        { validate: (val) => !!val, message: 'Password must be filled in'},
-        { validate: (val) => val.length >= 3 && val.length <= 10, message: 'Password length must be greater than 3 and less than 10'}
+        { validate: val => !!val, message: "Password must be filled in" },
+        {
+          validate: val => val.length >= 3 && val.length <= 10,
+          message: "Password length must be greater than 3 and less than 10"
+        }
       ],
       loginForm: {
-        labelPosition: 'top',
-        username: '',
-        password: ''
+        labelPosition: "top",
+        username: "",
+        password: ""
       }
     };
   },
   methods: {
-    submit () {
-      this.$refs.form.validate().then((result) => {
+    submit() {
+      this.$refs.form.validate().then(result => {
         //eslint-disable-next-line
         console.log('form valid: ', result)
       });
     },
-    clear () {
+    clear() {
       this.$refs.form.clear();
       this.loginForm = {
-        username: '',
-        password: ''
+        username: "",
+        password: ""
       };
     }
   }
