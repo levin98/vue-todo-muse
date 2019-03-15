@@ -1,5 +1,22 @@
 <template>
   <div class="home">
+    <mu-drawer
+      class="drawer"
+      :open.sync="open"
+      :docked="docked"
+      :right="position === 'right'"
+      :z-depth="zDepth"
+    >
+      <mu-form :model="control" label-position="left">
+        <mu-form-item prop="switchDone" label="Done">
+          <mu-switch v-model="control.switchDone"></mu-switch>
+        </mu-form-item>
+        <mu-form-item prop="switchNotDone" label="Not Done">
+          <mu-switch v-model="control.switchNotDone"></mu-switch>
+        </mu-form-item>
+      </mu-form>
+      <mu-button color="primary" @click="toggleDrawer">Close</mu-button>
+    </mu-drawer>
     <ToDoItem
       v-for="toDoItem of toDoItemsSorted"
       :key="toDoItem.title"
@@ -39,80 +56,14 @@ export default {
   },
   data() {
     return {
-      toDoItems: [
-        {
-          title: "Eat",
-          isDone: false
-        },
-        {
-          title: "Sleep",
-          isDone: true
-        },
-        {
-          title: "Work",
-          isDone: false
-        },
-        {
-          title: "Eat1",
-          isDone: false
-        },
-        {
-          title: "Sleep1",
-          isDone: true
-        },
-        {
-          title: "Work1",
-          isDone: false
-        },
-        {
-          title: "Eat2",
-          isDone: false
-        },
-        {
-          title: "Sleep2",
-          isDone: true
-        },
-        {
-          title: "Work2",
-          isDone: false
-        },
-        {
-          title: "Eat3",
-          isDone: false
-        },
-        {
-          title: "Sleep3",
-          isDone: true
-        },
-        {
-          title: "Work3",
-          isDone: false
-        },
-        {
-          title: "Eat4",
-          isDone: false
-        },
-        {
-          title: "Sleep4",
-          isDone: true
-        },
-        {
-          title: "Work4",
-          isDone: false
-        },
-        {
-          title: "Eat5",
-          isDone: false
-        },
-        {
-          title: "Sleep5",
-          isDone: true
-        },
-        {
-          title: "Work5",
-          isDone: false
-        }
-      ],
+      docked: false,
+      position: "left",
+      zDepth: 16,
+      control: {
+        switchDone: true,
+        switchNotDone: true
+      },
+      toDoItems: [],
       openSimple: false,
       labelPosition: "top",
       form: {
@@ -123,6 +74,9 @@ export default {
   methods: {
     toggleDone(toDoItem) {
       toDoItem.isDone = !toDoItem.isDone;
+    },
+    toggleDrawer() {
+      this.$store.dispatch("toggleDrawer");
     },
     openSimpleDialog() {
       this.openSimple = true;
@@ -144,6 +98,9 @@ export default {
         toDoItem.isDone ? done.push(toDoItem) : notDone.push(toDoItem);
       }
       return notDone.concat(done);
+    },
+    open() {
+      return this.$store.getters.getDrawerState;
     }
   }
 };
