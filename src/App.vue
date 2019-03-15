@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header />
+    <Header v-if="!(['/login', '/register'].includes(this.$route.path))" />
     <router-view />
   </div>
 </template>
