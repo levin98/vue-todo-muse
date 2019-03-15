@@ -98,12 +98,20 @@ export default {
           };
           login(payload)
             .then(msg => {
+              // eslint-disable-next-line
+                console.log(msg.data)
               this.openAlert(msg.data.status, msg.data.data);
+              if (msg.data.status === "success") {
+                this.$store.dispatch("login", {
+                  username: payload.user
+                });
+                this.$router.push("/");
+              }
             })
             .catch(e => {
-              this.openAlert(e.response.data.status, e.response.data.data);
-              //eslint-disable-next-line
-              console.log(e.response)
+              if (e.response) {
+                this.openAlert(e.response.data.status, e.response.data.data);
+              }
             });
         } else {
           return false;

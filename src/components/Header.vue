@@ -19,16 +19,22 @@
 <script>
 export default {
   name: "Header",
-  props: {
-    username: String
+  data() {
+    return {
+      username: "Username"
+    };
   },
   methods: {
     toggleDrawer() {
       this.$store.dispatch("toggleDrawer");
     },
     logout() {
+      this.$store.dispatch("logout");
       this.$router.push("/login");
     }
+  },
+  mounted() {
+    this.username = this.$store.getters.getUsername;
   }
 };
 </script>
