@@ -178,6 +178,7 @@ export default {
         .then(result => {
           //eslint-disable-next-line
           console.log(result)
+          this.toDoItems = [];
           if (result.data.data.length > 0) {
             this.toDoItems = result.data.data;
           }

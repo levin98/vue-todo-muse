@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = "http://f383efb4.ngrok.io/api"
+const url = "http://a0d7ef98.ngrok.io/api"
 
 
 export const registerUser = async (form) => {
