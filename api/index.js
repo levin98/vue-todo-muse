@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = "http://52.62.24.97"
+const url = "http://52.62.24.97/api"
 
 
 export const registerUser = async (form) => {
